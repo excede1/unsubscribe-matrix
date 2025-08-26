@@ -76,21 +76,72 @@
             border-bottom: none;
         }
         
+        /* Three-state checkbox styles */
         .checkbox-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        .checkbox-wrapper input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+        .tri-state-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
             cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            background: white;
         }
         
-        .checkbox-wrapper.disabled {
+        .tri-state-checkbox:hover {
+            border-color: #999;
+        }
+        
+        .tri-state-checkbox.disabled {
             opacity: 0.3;
             pointer-events: none;
+            cursor: not-allowed;
+        }
+        
+        /* Checkmark for subscribed state */
+        .tri-state-checkbox.subscribed {
+            border-color: #4CAF50;
+            background: #f1f8e9;
+        }
+        
+        .tri-state-checkbox.subscribed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* X for unsubscribed state */
+        .tri-state-checkbox.unsubscribed {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        
+        .tri-state-checkbox.unsubscribed::after {
+            content: '✗';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #f44336;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* Empty for none state */
+        .tri-state-checkbox.none {
+            border-color: #ccc;
+            background: white;
         }
         
         .button-group {
@@ -159,10 +210,67 @@
             font-weight: 500;
         }
         
-        .region-label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 2px;
+        .legend {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .legend-box.subscribed {
+            border-color: #4CAF50;
+            background: #f1f8e9;
+        }
+        
+        .legend-box.subscribed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .legend-box.unsubscribed {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        
+        .legend-box.unsubscribed::after {
+            content: '✗';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #f44336;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .legend-box.none {
+            border-color: #ccc;
+            background: white;
         }
     </style>
 </head>
@@ -178,7 +286,22 @@
         
         <div id="mainScreen">
             <h2>Manage Your Email Subscriptions</h2>
-            <p class="subtitle">Choose which brands you'd like to receive emails from</p>
+            <p class="subtitle">Click each box to toggle: ✓ Subscribed | ✗ Unsubscribed | Empty = No preference</p>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box subscribed"></div>
+                    <span>Subscribed</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box unsubscribed"></div>
+                    <span>Unsubscribed</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box none"></div>
+                    <span>No Preference</span>
+                </div>
+            </div>
             
             <table class="brand-table">
                 <thead>
@@ -195,12 +318,12 @@
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_bbau" name="sub_bbau" data-code="BBAU">
+                                <div class="tri-state-checkbox" data-attribute="sub_bbau" data-state="none"></div>
                             </div>
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_bbus" name="sub_bbus" data-code="BBUS">
+                                <div class="tri-state-checkbox" data-attribute="sub_bbus" data-state="none"></div>
                             </div>
                         </td>
                     </tr>
@@ -210,12 +333,12 @@
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_csau" name="sub_csau" data-code="CSAU">
+                                <div class="tri-state-checkbox" data-attribute="sub_csau" data-state="none"></div>
                             </div>
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_csus" name="sub_csus" data-code="CSUS">
+                                <div class="tri-state-checkbox" data-attribute="sub_csus" data-state="none"></div>
                             </div>
                         </td>
                     </tr>
@@ -225,12 +348,12 @@
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_ffau" name="sub_ffau" data-code="FFAU">
+                                <div class="tri-state-checkbox" data-attribute="sub_ffau" data-state="none"></div>
                             </div>
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_ffus" name="sub_ffus" data-code="FFUS">
+                                <div class="tri-state-checkbox" data-attribute="sub_ffus" data-state="none"></div>
                             </div>
                         </td>
                     </tr>
@@ -240,12 +363,12 @@
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_sbau" name="sub_sbau" data-code="SBAU">
+                                <div class="tri-state-checkbox" data-attribute="sub_sbau" data-state="none"></div>
                             </div>
                         </td>
                         <td>
-                            <div class="checkbox-wrapper disabled">
-                                <input type="checkbox" disabled>
+                            <div class="checkbox-wrapper">
+                                <div class="tri-state-checkbox disabled" data-state="disabled"></div>
                             </div>
                         </td>
                     </tr>
@@ -255,12 +378,12 @@
                         </td>
                         <td>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="sub_ppau" name="sub_ppau" data-code="PPAU">
+                                <div class="tri-state-checkbox" data-attribute="sub_ppau" data-state="none"></div>
                             </div>
                         </td>
                         <td>
-                            <div class="checkbox-wrapper disabled">
-                                <input type="checkbox" disabled>
+                            <div class="checkbox-wrapper">
+                                <div class="tri-state-checkbox disabled" data-state="disabled"></div>
                             </div>
                         </td>
                     </tr>
@@ -290,13 +413,42 @@
     <script>
         // Global variable to store email
         let userEmail = null;
-        let initialSubscriptions = {};
+        let subscriptionStates = {};
         
         // Define all subscription attributes
         const subscriptionAttributes = [
             'sub_bbau', 'sub_bbus', 'sub_csau', 'sub_csus', 
             'sub_ffau', 'sub_ffus', 'sub_sbau', 'sub_ppau'
         ];
+        
+        // Three-state cycle: none -> true -> false -> none
+        function cycleState(currentState) {
+            switch(currentState) {
+                case 'none': return 'true';
+                case 'true': return 'false';
+                case 'false': return 'none';
+                default: return 'none';
+            }
+        }
+        
+        // Update checkbox visual state
+        function updateCheckboxVisual(checkbox, state) {
+            checkbox.classList.remove('subscribed', 'unsubscribed', 'none');
+            checkbox.dataset.state = state;
+            
+            switch(state) {
+                case 'true':
+                    checkbox.classList.add('subscribed');
+                    break;
+                case 'false':
+                    checkbox.classList.add('unsubscribed');
+                    break;
+                case 'none':
+                default:
+                    checkbox.classList.add('none');
+                    break;
+            }
+        }
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -309,42 +461,57 @@
                 return;
             }
             
+            // Initialize all subscription states to 'none'
+            subscriptionAttributes.forEach(attr => {
+                subscriptionStates[attr] = 'none';
+            });
+            
             // Load initial subscription states from URL parameters
             subscriptionAttributes.forEach(attr => {
                 const value = urlParams.get(attr);
                 if (value !== null) {
-                    // Store initial state
-                    initialSubscriptions[attr] = value;
-                    
-                    // Set checkbox state based on value
-                    const checkbox = document.getElementById(attr);
-                    if (checkbox) {
-                        checkbox.checked = (value === 'true');
-                        console.log(`Setting ${attr} to ${value} (checked: ${checkbox.checked})`);
+                    // Accept 'true', 'false', or 'none' from URL
+                    if (value === 'true' || value === 'false' || value === 'none') {
+                        subscriptionStates[attr] = value;
+                        
+                        // Update visual state of checkbox
+                        const checkbox = document.querySelector(`[data-attribute="${attr}"]`);
+                        if (checkbox) {
+                            updateCheckboxVisual(checkbox, value);
+                            console.log(`Setting ${attr} to ${value}`);
+                        }
                     }
                 }
             });
             
-            // Also log what parameters were found
+            // Log what parameters were found
             console.log('URL parameters:', Array.from(urlParams.entries()));
-            console.log('Initial subscriptions:', initialSubscriptions);
+            console.log('Subscription states:', subscriptionStates);
             
             // Clean the URL for security
             const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
+            
+            // Add click handlers to all checkboxes
+            document.querySelectorAll('.tri-state-checkbox:not(.disabled)').forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    const attribute = this.dataset.attribute;
+                    const currentState = this.dataset.state || 'none';
+                    const newState = cycleState(currentState);
+                    
+                    // Update visual
+                    updateCheckboxVisual(this, newState);
+                    
+                    // Update stored state
+                    subscriptionStates[attribute] = newState;
+                    
+                    console.log(`${attribute}: ${currentState} -> ${newState}`);
+                });
+            });
         });
         
         function getSubscriptionStates() {
-            const states = {};
-            subscriptionAttributes.forEach(attr => {
-                const checkbox = document.getElementById(attr);
-                if (checkbox) {
-                    states[attr] = checkbox.checked ? 'true' : 'false';
-                } else {
-                    states[attr] = 'none';
-                }
-            });
-            return states;
+            return subscriptionStates;
         }
         
         function savePreferences() {
@@ -353,18 +520,7 @@
                 return;
             }
             
-            const subscriptions = getSubscriptionStates();
-            
-            // Check if any subscriptions are active
-            const hasActiveSubscription = Object.values(subscriptions).some(val => val === 'true');
-            
-            if (!hasActiveSubscription) {
-                // If no subscriptions selected, confirm with user
-                if (confirm('You have not selected any subscriptions. This will unsubscribe you from all brands. Continue?')) {
-                    unsubscribeAll();
-                }
-                return;
-            }
+            const states = getSubscriptionStates();
             
             // Show loading
             document.getElementById('mainScreen').style.display = 'none';
@@ -374,8 +530,10 @@
             const requestData = {
                 email: userEmail,
                 action: 'update_subscriptions',
-                subscriptions: subscriptions
+                subscriptions: states
             };
+            
+            console.log('Saving preferences:', requestData);
             
             // Make API call
             fetch('/update-subscriptions', {
@@ -387,11 +545,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                showConfirmation('Your preferences have been saved!', 'You will only receive emails from the brands you selected.');
+                showConfirmation('Your preferences have been saved!', 'Your email subscription preferences have been updated.');
             })
             .catch(error => {
                 console.error('Error:', error);
-                showConfirmation('Your preferences have been saved!', 'You will only receive emails from the brands you selected.');
+                showConfirmation('Your preferences have been saved!', 'Your email subscription preferences have been updated.');
             });
         }
         
@@ -405,6 +563,15 @@
             if (!confirm('Are you sure you want to unsubscribe from all brands? You will not receive any future emails.')) {
                 return;
             }
+            
+            // Set all states to false
+            subscriptionAttributes.forEach(attr => {
+                subscriptionStates[attr] = 'false';
+                const checkbox = document.querySelector(`[data-attribute="${attr}"]`);
+                if (checkbox && !checkbox.classList.contains('disabled')) {
+                    updateCheckboxVisual(checkbox, 'false');
+                }
+            });
             
             // Show loading
             document.getElementById('mainScreen').style.display = 'none';

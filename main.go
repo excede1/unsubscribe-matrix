@@ -954,27 +954,33 @@ func updateCustomerSubscriptionAttributes(email string, subscriptions map[string
 	// Build attributes map
 	attributes := make(map[string]interface{})
 	
-	// Set each subscription attribute
+	// Set each subscription attribute based on the three-state system
 	for key, value := range subscriptions {
 		if value == "true" {
 			attributes[key] = true
 		} else if value == "false" {
 			attributes[key] = false
-		} else {
-			// For "none" values, we don't set the attribute (it will be removed if it exists)
-			attributes[key] = nil
+		} else if value == "none" {
+			// For "none" values, we explicitly set to "none" string in Customer.io
+			attributes[key] = "none"
 		}
 	}
 
-	// Remove unsubscribed attribute if any subscriptions are active
-	hasActiveSubscription := false
+	// Check if ALL are false (meaning fully unsubscribed)
+	allFalse := true
 	for _, value := range subscriptions {
-		if value == "true" {
-			hasActiveSubscription = true
+		if value != "false" {
+			allFalse = false
 			break
 		}
 	}
-	if hasActiveSubscription {
+	
+	// Set unsubscribed attribute based on subscription states
+	if allFalse {
+		// If all are false, set unsubscribed to true
+		attributes["unsubscribed"] = true
+	} else {
+		// Otherwise, ensure unsubscribed is false
 		attributes["unsubscribed"] = false
 	}
 
@@ -1023,21 +1029,21 @@ func updateCustomerSubscriptionAttributes(email string, subscriptions map[string
 	return nil
 }
 
-// unsubscribeAllBrands removes all subscription attributes and sets unsubscribed to true
+// unsubscribeAllBrands sets all subscription attributes to false and sets unsubscribed to true
 func unsubscribeAllBrands(email string) error {
 	log.Printf("Unsubscribing all brands for email: %s", email)
 
-	// Build attributes map - set all subscriptions to null and unsubscribed to true
+	// Build attributes map - set all subscriptions to false and unsubscribed to true
 	attributes := map[string]interface{}{
 		"unsubscribed": true,
-		"sub_bbau":     nil,
-		"sub_bbus":     nil,
-		"sub_csau":     nil,
-		"sub_csus":     nil,
-		"sub_ffau":     nil,
-		"sub_ffus":     nil,
-		"sub_sbau":     nil,
-		"sub_ppau":     nil,
+		"sub_bbau":     false,
+		"sub_bbus":     false,
+		"sub_csau":     false,
+		"sub_csus":     false,
+		"sub_ffau":     false,
+		"sub_ffus":     false,
+		"sub_sbau":     false,
+		"sub_ppau":     false,
 	}
 
 	// Prepare the request payload
