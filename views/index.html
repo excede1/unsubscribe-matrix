@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barney - Manage Email Subscriptions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8ddd4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #4a4a4a;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6a6a6a;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .brand-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .brand-table th {
+            background-color: #f5f5f5;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a4a4a;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .brand-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            color: #4a4a4a;
+        }
+        
+        .brand-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: 3px solid #4a4a4a;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 0 #4a4a4a;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 #4a4a4a;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 0 #4a4a4a;
+        }
+        
+        .btn-save {
+            background-color: #c8d5e8;
+            color: #4a4a4a;
+        }
+        
+        .btn-unsubscribe-all {
+            background-color: #f5c8d0;
+            color: #4a4a4a;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #6a6a6a;
+        }
+        
+        .confirmation {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .confirmation h3 {
+            color: #4a4a4a;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .confirmation p {
+            color: #6a6a6a;
+            font-size: 16px;
+        }
+        
+        .brand-name {
+            font-weight: 500;
+        }
+        
+        .region-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 941.98 344.45" style="height: 40px; width: auto;">
+                <defs><style>.cls-1{fill:none;}.cls-2{clip-path:url(#clip-path);}.cls-3{fill:#454546;}</style><clipPath id="clip-path" transform="translate(0 0)"><rect class="cls-1" width="941.98" height="344.45"/></clipPath></defs>
+                <g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><g class="cls-2"><path class="cls-3" d="M141.81,230.49q-23.46,40.67-74,40.67-31.88,0-67.79-16.49L.37,0H48l.74,94.91q16.11-17.59,41-18,20.88,0,36.64,11.73,30.4,22.72,30.41,75.85,0,39.57-15,66M70,232.69a29.53,29.53,0,0,0,6.59-.74q31.52-5.85,31.52-66.69a92,92,0,0,0-3.3-25.65Q97.11,114.7,77.68,114.7a30.22,30.22,0,0,0-8.06,1.1Q48,122.39,48,161.6l-.36,66q12.45,5.13,22.35,5.13" transform="translate(0 0)"/><path class="cls-3" d="M265.83,245.15a27.71,27.71,0,0,1-4,5.86q-15.37,20.14-42.5,20.15a57,57,0,0,1-29.68-8.06q-26.38-15.39-26.39-49.47,0-17.22,8.43-30.41,19.43-29.68,71.09-29.68c5.37,0,9.9.12,13.56.37v-9.53q-.37-26.75-27.12-27.49-17.22,0-44.7,14.66L168.73,97.11l2.2-1.47a140,140,0,0,1,69.62-18.32,77.58,77.58,0,0,1,26.75,4.4q36.65,13.19,36.64,60.82v74.39a39.28,39.28,0,0,0,.37,5.49q1.45,11.75,12.46,11.74c2,0,18.38-1.11,32.24-10.45v35.83c-6.59,1.71-22.56,11.25-46.17,11.62-19.78.31-32.12-8.91-37-26m-25.65-13.56q16.13-5.13,16.13-37.75v-8.79c-2.2-.24-5.75-.37-10.63-.37q-32.25.75-34.44,28.95a20.84,20.84,0,0,0,1.09,6.6q4,12.83,18,12.82a31.06,31.06,0,0,0,9.89-1.46" transform="translate(0 0)"/><path class="cls-3" d="M337.73,269.43V80.62h44.7l1.47,31.14Q399.29,77.32,433.73,77c3.67,0,15.3.13,17.5.37l-3.73,44.91c-6.35-2.69-22.32-.94-27.69-.94a30,30,0,0,0-13.56,3.3q-20.88,10.64-20.89,48v96.84Z" transform="translate(0 0)"/><path class="cls-3" d="M681.93,248.93c-6.87,8.59-19.9,22.23-78.27,21.87-28.1-.18-42.51-15.64-43.24-45.44V146.21a58,58,0,0,0-1.1-11.36q-4.4-20.16-20.52-20.15a26.84,26.84,0,0,0-10.63,2.19q-22.72,10.64-22.71,55.33v97.21H457.82v-187h45.8l.74,23.08q19-28.2,50.2-28.58a53.13,53.13,0,0,1,25.28,6.23q28.21,15.39,28.22,58.27v81.34c-.91,19.35,30.81,14.79,43.5,4.38Z" transform="translate(0 0)"/><path class="cls-3" d="M721.47,271.16q-29,0-50.57-14.66-37.38-26-37.38-84.64,0-38.84,18.32-63.76Q674.57,77,716,77a104.73,104.73,0,0,1,23.82,2.57q51.3,13.19,51.3,94.54v13.56H683a99.94,99.94,0,0,0,3.3,15.38q10.25,29.69,39.21,29.69,22.35,0,48-13.93l13.92,31.52a115.45,115.45,0,0,1-65.95,20.88M710.11,114.33q-21.25,4.4-26.39,38.48l59.37-.37A67.81,67.81,0,0,0,742,140q-4.41-26.38-26.39-26.38a22.56,22.56,0,0,0-5.49.73" transform="translate(0 0)"/><path class="cls-3" d="M941.27,131.83c-7.66,50.93-42,114.4-57.85,151.79-16.58,39.12-36.16,60.34-66,60.83q-19.07,0-44.34-11L787,299q18.33,7,27.48,7a20.63,20.63,0,0,0,11-2.93q10.62-5.87,21.61-37L782.28,82.45h51.77l41.36,134.91s46.77-81.78,17-140.86c-3.67-7.28,56.82,2.73,48.91,55.33" transform="translate(0 0)"/></g></g></g>
+            </svg>
+        </div>
+        
+        <div id="mainScreen">
+            <h2>Manage Your Email Subscriptions</h2>
+            <p class="subtitle">Choose which brands you'd like to receive emails from</p>
+            
+            <table class="brand-table">
+                <thead>
+                    <tr>
+                        <th>Brand</th>
+                        <th style="text-align: center;">Australia/International</th>
+                        <th style="text-align: center;">North America</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="brand-name">Barney Bed</div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_bbau" name="sub_bbau" data-code="BBAU">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_bbus" name="sub_bbus" data-code="BBUS">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="brand-name">Cat Street</div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_csau" name="sub_csau" data-code="CSAU">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_csus" name="sub_csus" data-code="CSUS">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="brand-name">Furfy</div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_ffau" name="sub_ffau" data-code="FFAU">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_ffus" name="sub_ffus" data-code="FFUS">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="brand-name">Scatbags</div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_sbau" name="sub_sbau" data-code="SBAU">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper disabled">
+                                <input type="checkbox" disabled>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="brand-name">Potty Plant</div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="sub_ppau" name="sub_ppau" data-code="PPAU">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox-wrapper disabled">
+                                <input type="checkbox" disabled>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="button-group">
+                <button class="btn btn-save" onclick="savePreferences()">
+                    Save Preferences
+                </button>
+                <button class="btn btn-unsubscribe-all" onclick="unsubscribeAll()">
+                    Unsubscribe from All
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loadingScreen">
+            <p>Updating your preferences...</p>
+        </div>
+        
+        <div class="confirmation" id="confirmationScreen">
+            <h3 id="confirmationTitle"></h3>
+            <p id="confirmationMessage"></p>
+        </div>
+    </div>
+    
+    <script>
+        // Global variable to store email
+        let userEmail = null;
+        let initialSubscriptions = {};
+        
+        // Define all subscription attributes
+        const subscriptionAttributes = [
+            'sub_bbau', 'sub_bbus', 'sub_csau', 'sub_csus', 
+            'sub_ffau', 'sub_ffus', 'sub_sbau', 'sub_ppau'
+        ];
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            userEmail = urlParams.get('email');
+            
+            if (!userEmail) {
+                alert('No email provided. Please access this page with an email parameter.');
+                return;
+            }
+            
+            // Load initial subscription states from URL parameters
+            subscriptionAttributes.forEach(attr => {
+                const value = urlParams.get(attr);
+                if (value !== null) {
+                    // Store initial state
+                    initialSubscriptions[attr] = value;
+                    
+                    // Set checkbox state based on value
+                    const checkbox = document.getElementById(attr);
+                    if (checkbox) {
+                        checkbox.checked = (value === 'true');
+                    }
+                }
+            });
+            
+            // Clean the URL for security
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        });
+        
+        function getSubscriptionStates() {
+            const states = {};
+            subscriptionAttributes.forEach(attr => {
+                const checkbox = document.getElementById(attr);
+                if (checkbox) {
+                    states[attr] = checkbox.checked ? 'true' : 'false';
+                } else {
+                    states[attr] = 'none';
+                }
+            });
+            return states;
+        }
+        
+        function savePreferences() {
+            if (!userEmail) {
+                alert('Error: No email found.');
+                return;
+            }
+            
+            const subscriptions = getSubscriptionStates();
+            
+            // Check if any subscriptions are active
+            const hasActiveSubscription = Object.values(subscriptions).some(val => val === 'true');
+            
+            if (!hasActiveSubscription) {
+                // If no subscriptions selected, confirm with user
+                if (confirm('You have not selected any subscriptions. This will unsubscribe you from all brands. Continue?')) {
+                    unsubscribeAll();
+                }
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'block';
+            
+            // Build request data
+            const requestData = {
+                email: userEmail,
+                action: 'update_subscriptions',
+                subscriptions: subscriptions
+            };
+            
+            // Make API call
+            fetch('/update-subscriptions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showConfirmation('Your preferences have been saved!', 'You will only receive emails from the brands you selected.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showConfirmation('Your preferences have been saved!', 'You will only receive emails from the brands you selected.');
+            });
+        }
+        
+        function unsubscribeAll() {
+            if (!userEmail) {
+                alert('Error: No email found.');
+                return;
+            }
+            
+            // Confirm action
+            if (!confirm('Are you sure you want to unsubscribe from all brands? You will not receive any future emails.')) {
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'block';
+            
+            // Make API call
+            fetch('/unsubscribe-all', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: userEmail,
+                    action: 'unsubscribe_all'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showConfirmation('You have been unsubscribed', 'Sorry to see you go! You will no longer receive emails from any of our brands.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showConfirmation('You have been unsubscribed', 'Sorry to see you go! You will no longer receive emails from any of our brands.');
+            });
+        }
+        
+        function showConfirmation(title, message) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmationScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

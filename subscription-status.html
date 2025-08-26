@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Subscription Status Table</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.8/cdn.min.js" defer></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 20px;
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            background-color: #f5f5f5;
+            margin: 0;
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            vertical-align: top;
+        }
+        
+        th:first-child {
+            width: 40%;
+        }
+        
+        th:not(:first-child) {
+            width: 30%;
+            text-align: center;
+        }
+        
+        td {
+            padding: 20px 15px 35px 15px;
+            border-bottom: 1px solid #e9ecef;
+            position: relative;
+            vertical-align: middle;
+        }
+        
+        td:first-child {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        td:not(:first-child) {
+            text-align: center;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .product-desc {
+            font-weight: 400;
+            color: #6c757d;
+        }
+        
+        .separator {
+            color: #94a3b8;
+            margin: 0 4px;
+        }
+        
+        .status-toggle {
+            cursor: pointer;
+            font-size: 28px;
+            text-align: center;
+            user-select: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            background-color: #f8fafc;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        @media (hover: hover) {
+            .status-toggle:hover {
+                transform: scale(1.1);
+                background-color: #e0f2fe;
+                border-color: #0ea5e9;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+        }
+        
+        .status-toggle:active {
+            transform: scale(0.95);
+            background-color: #e0f2fe;
+            border-color: #0ea5e9;
+        }
+        
+        .status-toggle::after {
+            content: "Click";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #64748b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            opacity: 0.6;
+        }
+        
+        .legend {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin: 0 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .legend-emoji {
+            font-size: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .container {
+                border-radius: 0;
+                box-shadow: none;
+                margin-top: env(safe-area-inset-top, 0);
+            }
+            
+            h1 {
+                font-size: 20px;
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th {
+                font-size: 11px;
+                padding: 12px 8px;
+                line-height: 1.4;
+            }
+            
+            th span {
+                font-size: 16px !important;
+            }
+            
+            td {
+                padding: 12px 8px;
+            }
+            
+            td:first-child {
+                padding: 14px 8px;
+                font-size: 13px;
+                line-height: 1.4;
+                vertical-align: middle;
+            }
+            
+            .product-name {
+                font-size: 13px;
+                line-height: 1.3;
+            }
+            
+            .separator {
+                display: none;
+            }
+            
+            .product-desc {
+                display: block;
+                font-size: 11px;
+                margin-top: 3px;
+                color: #6c757d;
+                font-weight: 400;
+            }
+            
+            .status-toggle {
+                font-size: 32px;
+                padding: 12px 16px;
+                min-width: 60px;
+            }
+            
+            .status-toggle::after {
+                display: none;
+            }
+            
+            .legend-item {
+                display: inline-block;
+                margin: 5px 10px;
+                font-size: 13px;
+            }
+            
+            button {
+                display: inline-block;
+                width: auto;
+                padding: 12px 24px !important;
+                font-size: 14px !important;
+                margin: 5px !important;
+            }
+            
+            div[style*="padding: 15px"] p {
+                font-size: 13px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" x-data="{
+        statuses: {
+            'barney': { aus: 0, usa: 0 },
+            'cat': { aus: 0, usa: 0 },
+            'furfy': { aus: 0, usa: 0 },
+            'potty': { aus: 0, usa: 0 },
+            'scatbags': { aus: 0, usa: 0 }
+        },
+        statusEmojis: ['⬜', '✅', '❌'],
+        init() {
+            // Load saved preferences from localStorage
+            const saved = localStorage.getItem('subscriptionPreferences');
+            if (saved) {
+                try {
+                    this.statuses = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to load preferences');
+                }
+            }
+        },
+        toggleStatus(product, region) {
+            this.statuses[product][region] = (this.statuses[product][region] + 1) % 3;
+        },
+        getEmoji(product, region) {
+            return this.statusEmojis[this.statuses[product][region]];
+        },
+        unsubscribeAll() {
+            if (confirm('Are you sure you want to unsubscribe from all products in all regions?')) {
+                for (let product in this.statuses) {
+                    this.statuses[product].aus = 2;
+                    this.statuses[product].usa = 2;
+                }
+            }
+        },
+        savePreferences() {
+            const statusNames = ['Not Subscribed', 'Subscribed', 'Unsubscribed'];
+            const productNames = {
+                'barney': 'Barney Bed - Luxury Dog Beds',
+                'cat': 'Cat Street - Luxury Cat Beds',
+                'furfy': 'Furfy - Pet Hair Remover',
+                'potty': 'Potty Plant - Real Grass Dog Toilet',
+                'scatbags': 'Scatbags - Planet Friendly Dog Poo Bags'
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('subscriptionPreferences', JSON.stringify(this.statuses));
+            
+            // Show success message
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #28a745; color: white; padding: 15px 30px; border-radius: 8px; font-size: 16px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out;';
+            successDiv.textContent = '✓ Preferences Saved Successfully!';
+            document.body.appendChild(successDiv);
+            
+            // Add animation styles
+            const style = document.createElement('style');
+            style.textContent = '@keyframes slideIn { from { transform: translateX(-50%) translateY(-100%); } to { transform: translateX(-50%) translateY(0); } } @keyframes slideOut { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-100%); } }';
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                successDiv.style.animation = 'slideOut 0.3s ease-in';
+                successDiv.style.animationFillMode = 'forwards';
+                setTimeout(() => {
+                    successDiv.remove();
+                    style.remove();
+                }, 300);
+            }, 2700);
+        }
+    }">
+        <h1>Subscription Status Manager</h1>
+        
+        <div style="padding: 15px; text-align: center; background-color: #f0f9ff; border-bottom: 1px solid #bae6fd;">
+            <p style="margin: 0; color: #0369a1; font-size: 14px;">
+                <svg style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#0369a1"/>
+                </svg>
+                Tip: Click any status button to cycle through subscription options
+            </p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Australia & Rest of World<br><span style="font-size: 20px; margin-top: 5px; display: inline-block;">🇦🇺 🇳🇿 🇬🇧 🇪🇺</span></th>
+                    <th>USA / Canada / Mexico<br><span style="font-size: 20px; margin-top: 5px; display: inline-block;">🇺🇸 🇨🇦 🇲🇽</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="product-name">Barney Bed <span class="separator">-</span> <span class="product-desc">Luxury Dog Beds</span></td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('barney', 'aus')" x-text="getEmoji('barney', 'aus')" title="Click to change status"></div>
+                    </td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('barney', 'usa')" x-text="getEmoji('barney', 'usa')" title="Click to change status"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="product-name">Cat Street <span class="separator">-</span> <span class="product-desc">Luxury Cat Beds</span></td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('cat', 'aus')" x-text="getEmoji('cat', 'aus')" title="Click to change status"></div>
+                    </td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('cat', 'usa')" x-text="getEmoji('cat', 'usa')" title="Click to change status"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="product-name">Furfy <span class="separator">-</span> <span class="product-desc">Pet Hair Remover</span></td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('furfy', 'aus')" x-text="getEmoji('furfy', 'aus')" title="Click to change status"></div>
+                    </td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('furfy', 'usa')" x-text="getEmoji('furfy', 'usa')" title="Click to change status"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="product-name">Potty Plant <span class="separator">-</span> <span class="product-desc">Real Grass Dog Toilet</span></td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('potty', 'aus')" x-text="getEmoji('potty', 'aus')" title="Click to change status"></div>
+                    </td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('potty', 'usa')" x-text="getEmoji('potty', 'usa')" title="Click to change status"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="product-name">Scatbags <span class="separator">-</span> <span class="product-desc">Planet Friendly Dog Poo Bags</span></td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('scatbags', 'aus')" x-text="getEmoji('scatbags', 'aus')" title="Click to change status"></div>
+                    </td>
+                    <td>
+                        <div class="status-toggle" @click="toggleStatus('scatbags', 'usa')" x-text="getEmoji('scatbags', 'usa')" title="Click to change status"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-emoji">⬜</span> Not Subscribed
+            </div>
+            <div class="legend-item">
+                <span class="legend-emoji">✅</span> Subscribed
+            </div>
+            <div class="legend-item">
+                <span class="legend-emoji">❌</span> Unsubscribed
+            </div>
+        </div>
+        
+        <div style="padding: 20px; text-align: center; background-color: #f8f9fa; border-top: 1px solid #dee2e6;">
+            <button @click="unsubscribeAll()" 
+                    style="background-color: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-right: 10px; transition: background-color 0.3s; font-weight: 500; touch-action: manipulation;"
+                    onmouseover="this.style.backgroundColor='#c82333'" 
+                    onmouseout="this.style.backgroundColor='#dc3545'">
+                Unsubscribe All
+            </button>
+            <button @click="savePreferences()" 
+                    style="background-color: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s; font-weight: 500; touch-action: manipulation;"
+                    onmouseover="this.style.backgroundColor='#218838'" 
+                    onmouseout="this.style.backgroundColor='#28a745'">
+                Save Preferences
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+app.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+main
+test-build
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*_test.go
+test/
+coverage.out
+
+# Documentation
+README.md
+*.md
+
+# Fly.io files
+fly.toml
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Deployment scripts
+deploy.sh
+local-test.sh
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node modules (if any)
+node_modules/
+
+# Go specific
+vendor/
