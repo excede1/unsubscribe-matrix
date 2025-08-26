@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite" // Pure-Go SQLite driver (no CGO required)
 )
 
 var db *sql.DB
@@ -16,7 +17,13 @@ func initDatabase() error {
 	var err error
 
 	// Open SQLite database (creates file if it doesn't exist)
-	db, err = sql.Open("sqlite3", "./email_processing.db")
+	// Use mounted volume in production, local file in development
+	dbPath := "./email_processing.db"
+	if os.Getenv("FLY_APP_NAME") != "" {
+		// Production - use mounted volume
+		dbPath = "/app/data/email_processing.db"
+	}
+	db, err = sql.Open("sqlite", dbPath)
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}

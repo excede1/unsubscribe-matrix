@@ -1,7 +1,7 @@
-# fly.toml app configuration file generated for customerio-pauser
+# fly.toml app configuration file for unsubscribe-matrix
 
-app = "customerio-pauser"
-primary_region = "iad"
+app = "unsubscribe-matrix"
+primary_region = "sin"
 
 [build]
 
@@ -36,5 +36,5 @@ primary_region = "iad"
   policy = "always"
 
 [[mounts]]
-  source = "app_logs"
-  destination = "/app/logs"
+  source = "unsubscribe_matrix_data"
+  destination = "/app/data"
