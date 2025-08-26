@@ -320,9 +320,14 @@
                     const checkbox = document.getElementById(attr);
                     if (checkbox) {
                         checkbox.checked = (value === 'true');
+                        console.log(`Setting ${attr} to ${value} (checked: ${checkbox.checked})`);
                     }
                 }
             });
+            
+            // Also log what parameters were found
+            console.log('URL parameters:', Array.from(urlParams.entries()));
+            console.log('Initial subscriptions:', initialSubscriptions);
             
             // Clean the URL for security
             const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;

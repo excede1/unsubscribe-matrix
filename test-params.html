@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test URL Parameters</title>
+</head>
+<body>
+    <h1>URL Parameter Test</h1>
+    <div id="output"></div>
+    
+    <h2>Checkboxes:</h2>
+    <div>
+        <label>
+            <input type="checkbox" id="sub_bbau"> BBAU
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox" id="sub_bbus"> BBUS
+        </label>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const output = document.getElementById('output');
+            
+            // Show all parameters
+            let html = '<h2>URL Parameters Found:</h2><ul>';
+            for (const [key, value] of urlParams) {
+                html += `<li>${key} = ${value}</li>`;
+                
+                // Set checkbox if it exists
+                const checkbox = document.getElementById(key);
+                if (checkbox) {
+                    checkbox.checked = (value === 'true');
+                    console.log(`Set ${key} checkbox to ${value === 'true'}`);
+                }
+            }
+            html += '</ul>';
+            output.innerHTML = html;
+            
+            // Log current URL
+            console.log('Current URL:', window.location.href);
+            console.log('URL params:', Array.from(urlParams.entries()));
+        });
+    </script>
+</body>
+</html>
